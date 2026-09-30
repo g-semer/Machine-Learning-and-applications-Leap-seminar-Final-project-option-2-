@@ -130,10 +130,14 @@ Confusion Matrix (Neural Network):
 
 
 # The Comparison
+<p float="left">
+  <img src="/bar_chart.png" width="35%" />
+  <img src="/confusion_matrices.png" width="60%" /> 
+</p>
+Reviewing the bar chart we see that the neural network achieved a better score both in accuracy and F1 as we expected, because it is better at learning non linear relations between features, but it was only barely better. Also, comparing the confusion matrices it's obvious that the neural network did better both in false negatives and false positives, with it doing better in the false positives compared to the two outcomes, making it better for identifying the higher income households.
 
 
-
-
-
-
-
+# Conclusion 
+In their current condition I would not deploy any model for this specific task, because neither model is good enough and they would waste too many outreach resources.\
+To improve both models we could try to change the imputer of the preprocess from SimpleImputer to some other. Also to further improve the neural network we could try different combinations of the number of hidden dense layers, hidden dense layers' activation functions, hidden dense layers' units, batch sizes and adam learning rates.\
+For this specific task I would rather use use a logistic regression model, so that it is possible to analyze which features influenced the prediction the most. But if after some improvements the neural network turned out to achieve much better results I would reconsider it. 
