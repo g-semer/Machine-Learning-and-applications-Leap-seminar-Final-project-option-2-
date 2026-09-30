@@ -19,7 +19,7 @@ The dataset used is Adult, also called Census Income. Each row describes one per
 # Processing the data
 
 ## Loading and examining the data
-We load the data using `fetch_opeth` as a X dataframe and a y list. Then we preview a part of the dataset using `X.head()`, we check its shape with `X.shape` and count how many higher and lower income households the dataset includes. In the end we get:
+We load the data using `fetch_opeth` as a `X dataframe` and a `y target list`. Then we preview a part of the dataset using `X.head()`, we check its shape with `X.shape` and count how many higher and lower income households the dataset includes. In the end we get:
 ```
 Rows and columns: (48842, 14)
 Target values: {'<=50K': 37155, '>50K': 11687}
@@ -45,5 +45,69 @@ Then we combine the two pipelines in variable called `preprocess` using `ColumnT
 
 # Logistic Regression Model
 
-##
+## Full pipeline
+To create the full pipeline needed for the logistic regression model we combined in a pipeline the `preprocess` and `LogisticRegression` for model, with `max_iter=1000` so that the model converges.
+
+##Cross-validation
+After that we estimate the model's performance with cross-validation on the training data using `StratifiedKFold`, averaging over 5 folds to get a steadier estimate.  
+Then we compute the cross-validation scores with `cross_val_score`, scoring by F1 and print the mean and the standard deviation:
+```
+Mean ± Std (Train set):  0.6576 ± 0.0098
+```
+
+## Fitting and evaluating the test set
+In the end we fit the training data on the `clf` pipeline, make a prediction for the `X_test` data using the `clf` pipeline, and evaluate the accuracy score, the F1 score and the confusion matrix by comparing the `y_test` and `y_pred_clf`, as shown below:
+```
+clf.fit(X_train, y_train)
+y_pred_clf = clf.predict(X_test)
+
+clf_acc = accuracy_score(y_test, y_pred_clf)
+clf_f1 = f1_score(y_test, y_pred_clf)
+confusion_matrix_clf = confusion_matrix(y_test, y_pred_clf)
+
+print("Accuracy: ", np.round(clf_acc, 4))
+print("F1 score: ", np.round(clf_f1, 4))
+print()
+print("Confusion Matrix (Logistic Regression):")
+print(confusion_matrix_clf)
+```
+```
+Accuracy:  0.8524
+F1 score:  0.6562
+Confusion Matrix (Logistic Regression):
+[[6951  480]
+ [ 962 1376]]
+```
+
+
+# Neural Network
+
+## Fitting and transforming the data
+A neural network needs a plain numeric array as input, so we apply the `preprocess` to turn the mixed table into numbers. We fit the `preprocess` on the training dataframes only, while transform both sets, using `fit_transform` for `X_train` and just `transform` for `X_test`.
+
+## Building the network
+After getting the data ready, we build a small dense network using `keras.Sequential` with the following layers:
+* An `Input` layer with as many units as the transformed train dataframe.
+* 2 hidden `Dense` layers with activation function `relu`, giving 64 units for the first and 32 for the second.
+* 2 `Dropout` layers with 0.3 rate, randomly deactivating 30% of the above layer's units to reduce overfitting.
+* One output `Dense` layer with activation function `sigmoid` and 1 unit, because the target is binary, to give the probability of the positive (higher income) class.
+The networks layout is as shown below:
+```
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ dense_9 (Dense)                 │ (None, 64)             │         6,784 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout_6 (Dropout)             │ (None, 64)             │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_10 (Dense)                │ (None, 32)             │         2,080 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout_7 (Dropout)             │ (None, 32)             │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_11 (Dense)                │ (None, 1)              │            33 │
+```
+
+
+
+
+
 
