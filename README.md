@@ -114,7 +114,12 @@ Then we create a `callback` variable with `EarlyStopping`, monitoring `val_loss`
 Now we can fit the network to training data, using the `callback`, `20 epochs`, `batch_size 128` and `validation_split 0.1` to evaluate the model during it's training.
 
 ## Evaluating on the test set
-Continuing we make the prediction on the transformed test set. The network outputs probabilities, so we create a `nn_pred` list for the prediction whose values are positive when the probability is above 0.5. In the end we evaluate the accuracy score, the F1 score and the confusion matrix by comparing the `y_test` and `nn_pred`, as shown below:
+Continuing we make the prediction on the transformed test set. The network outputs probabilities, so we create a `nn_pred` list for the prediction whose values are positive when the probability is above 0.5, as shown below:
+```
+nn_prob = net.predict(X_test_prep).ravel()
+nn_pred = (nn_prob > 0.5).astype(int)
+```
+In the end we evaluate the accuracy score, the F1 score and the confusion matrix by comparing the `y_test` and `nn_pred`, as shown below:
 ```
 Accuracy:  0.8552
 F1 score:  0.6643
@@ -122,6 +127,12 @@ Confusion Matrix (Neural Network):
 [[6954  477]
  [ 938 1400]]
 ```
+
+
+# The Comparison
+
+
+
 
 
 
