@@ -48,7 +48,7 @@ Then we combine the two pipelines in variable called `preprocess` using `ColumnT
 ## Full pipeline
 To create the full pipeline needed for the logistic regression model we combined in a pipeline the `preprocess` and `LogisticRegression` for model, with `max_iter=1000` so that the model converges.
 
-##Cross-validation
+## Cross-validation
 After that we estimate the model's performance with cross-validation on the training data using `StratifiedKFold`, averaging over 5 folds to get a steadier estimate.  
 Then we compute the cross-validation scores with `cross_val_score`, scoring by F1 and print the mean and the standard deviation:
 ```
@@ -106,7 +106,22 @@ The networks layout is as shown below:
 │ dense_11 (Dense)                │ (None, 1)              │            33 │
 ```
 
+## Compiling and training the network
+We compile the network using `adam` as the optimizer, `accuracy` for the metrics and `binary_crossentropy` as the loss function because the output is a single sigmoid unit.\
+\
+Then we create a `callback` variable with `EarlyStopping`, monitoring `val_loss`, giving it a patience of `3 epochs` before checking and using `restore_best_weight`, to keep the best weights before the validation loss stopped improving.\
+\
+Now we can fit the network to training data, using the `callback`, `20 epochs`, `batch_size 128` and `validation_split 0.1` to evaluate the model during it's training.
 
+## Evaluating on the test set
+Continuing we make the prediction on the transformed test set. The network outputs probabilities, so we create a `nn_pred` list for the prediction whose values are positive when the probability is above 0.5. In the end we evaluate the accuracy score, the F1 score and the confusion matrix by comparing the `y_test` and `nn_pred`, as shown below:
+```
+Accuracy:  0.8552
+F1 score:  0.6643
+Confusion Matrix (Neural Network):
+[[6954  477]
+ [ 938 1400]]
+```
 
 
 
